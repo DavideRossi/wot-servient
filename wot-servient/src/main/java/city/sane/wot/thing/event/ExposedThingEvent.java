@@ -43,6 +43,7 @@ public class ExposedThingEvent<T> extends ThingEvent<T> {
         descriptions = event.getDescriptions();
         uriVariables = event.getUriVariables();
         type = event.getType();
+        objectType = event.getObjectType();
         data = event.getData();
     }
 

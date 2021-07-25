@@ -25,6 +25,7 @@ import city.sane.wot.thing.schema.StringSchema;
 import city.sane.wot.thing.schema.VariableDataSchema;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Objects;
@@ -35,6 +36,9 @@ import java.util.Objects;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ThingAction<I, O> extends ThingInteraction<ThingAction<I, O>> {
+    @JsonProperty("@type")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    String objectType;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonDeserialize(as = VariableDataSchema.class)
     DataSchema<I> input;
@@ -42,12 +46,17 @@ public class ThingAction<I, O> extends ThingInteraction<ThingAction<I, O>> {
     @JsonDeserialize(as = VariableDataSchema.class)
     DataSchema<O> output;
 
-    ThingAction(DataSchema<I> input, DataSchema<O> output) {
+    ThingAction(String objectType, DataSchema<I> input, DataSchema<O> output) {
+        this.objectType = objectType;
         this.input = input;
         this.output = output;
     }
 
     public ThingAction() {
+    }
+
+    public String getObjectType() {
+        return objectType;
     }
 
     public DataSchema<I> getInput() {
@@ -60,7 +69,7 @@ public class ThingAction<I, O> extends ThingInteraction<ThingAction<I, O>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), input, output);
+        return Objects.hash(super.hashCode(), objectType, input, output);
     }
 
     @Override
@@ -75,12 +84,13 @@ public class ThingAction<I, O> extends ThingInteraction<ThingAction<I, O>> {
             return false;
         }
         ThingAction<Object, Object> that = (ThingAction<Object, Object>) o;
-        return Objects.equals(input, that.input) && Objects.equals(output, that.output);
+        return Objects.equals(objectType, that.objectType) && Objects.equals(input, that.input) && Objects.equals(output, that.output);
     }
 
     @Override
     public String toString() {
         return "ThingAction{" +
+                "objectType='" + objectType + '\'' +
                 "input=" + input +
                 ", output=" + output +
                 ", description='" + description + '\'' +
@@ -94,8 +104,14 @@ public class ThingAction<I, O> extends ThingInteraction<ThingAction<I, O>> {
      * Allows building new {@link ThingAction} objects.
      */
     public static class Builder extends AbstractBuilder<Builder> {
+        private String objectType;
         private DataSchema input = new StringSchema();
         private DataSchema output = new StringSchema();
+
+        public Builder setObjectType(String objectType) {
+            this.objectType = objectType;
+            return this;
+        }
 
         public Builder setInput(DataSchema input) {
             this.input = input;
@@ -109,7 +125,7 @@ public class ThingAction<I, O> extends ThingInteraction<ThingAction<I, O>> {
 
         @Override
         public ThingAction<Object, Object> build() {
-            ThingAction<Object, Object> action = new ThingAction<>(input, output);
+            ThingAction<Object, Object> action = new ThingAction<>(objectType, input, output);
             applyInteractionParameters(action);
             return action;
         }

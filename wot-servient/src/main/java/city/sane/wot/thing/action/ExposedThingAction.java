@@ -44,7 +44,7 @@ public class ExposedThingAction<I, O> extends ThingAction<I, O> {
     private final ActionState<I, O> state;
 
     public ExposedThingAction(String name, ThingAction<I, O> action, ExposedThing thing) {
-        this(name, thing, new ActionState<>(), action.getDescription(), action.getDescriptions(), action.getUriVariables(), action.getInput(), action.getOutput());
+        this(name, thing, new ActionState<>(), action.getDescription(), action.getDescriptions(), action.getUriVariables(), action.getObjectType(), action.getInput(), action.getOutput());
     }
 
     @SuppressWarnings("squid:S107")
@@ -54,6 +54,7 @@ public class ExposedThingAction<I, O> extends ThingAction<I, O> {
                        String description,
                        Map<String, String> descriptions,
                        Map<String, Map<String, Object>> uriVariables,
+                       String objectType,
                        DataSchema input,
                        DataSchema output) {
         this.name = name;
@@ -62,6 +63,7 @@ public class ExposedThingAction<I, O> extends ThingAction<I, O> {
         this.description = description;
         this.descriptions = descriptions;
         this.uriVariables = uriVariables;
+        this.objectType = objectType;
         this.input = input;
         this.output = output;
     }
