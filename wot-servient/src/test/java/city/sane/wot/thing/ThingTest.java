@@ -66,6 +66,7 @@ public class ThingTest {
     private Map<Object, SecurityScheme> securityDefinitions;
     private List<Form> forms;
     private List<String> security;
+    private Map<String, Object> metadata;
 
     @BeforeEach
     public void setUp() {
@@ -83,6 +84,7 @@ public class ThingTest {
         securityDefinitions = Map.of("basic_sc", new BasicSecurityScheme("header"));
         security = List.of("basic_sc");
         forms = List.of();
+        metadata = Map.of("g:geolocation", Map.of("position", Map.of("longitude", 47.3814, "latitude", -68.323)));
     }
 
     @Test
@@ -101,7 +103,9 @@ public class ThingTest {
                 forms,
                 security,
                 securityDefinitions,
-                base);
+                base,
+                metadata
+        );
 
         assertThatJson(thing.toJson())
                 .when(Option.IGNORING_ARRAY_ORDER)
@@ -114,7 +118,8 @@ public class ThingTest {
                         "    \"@type\":\"Thing\",\n" +
                         "    \"@context\":\"http://www.w3.org/ns/td\",\n" +
                         "    \"securityDefinitions\":{\"basic_sc\":{\"scheme\":\"basic\",\"in\":\"header\"}},\n" +
-                        "    \"security\":[\"basic_sc\"]\n" +
+                        "    \"security\":[\"basic_sc\"],\n" +
+                        "    \"g:geolocation\":{\"position\":{\"longitude\":47.3814,\"latitude\":-68.323}}\n" +
                         "}");
     }
 
@@ -207,6 +212,30 @@ public class ThingTest {
             assertEquals(new Context("https://www.w3.org/2019/wot/td/v1").addContext("saref", "https://w3id.org/saref#").addContext("cov", "http://www.example.org/coap-binding#"), thing.getObjectContext());
             assertEquals(Map.of("noschema", new NoSecurityScheme()), thing.getSecurityDefinitions());
             assertEquals(List.of("noschema"), thing.getSecurity());
+        }
+
+        @Test
+        void shouldDeserializeGivenJsonToThing3() {
+            String json = "{\n" +
+                    "  \"@context\": [\n" +
+                    "    \"https://www.w3.org/2019/wot/td/v1\",\n" +
+                    "    {\n" +
+                    "      \"g\": \"https://www.w3.org/2019/wot/td/geo/v1\"\n" +
+                    "    }\n" +
+                    "  ],\n" +
+                    "  \"g:geolocation\": {\n" +
+                    "     \"position\": {\n" +
+                    "        \"longitude\": 47.3814,\n" +
+                    "        \"latitude\": -68.323\n" +
+                    "     }\n" +
+                    "  },\n" +
+                    "  \"properties\": {\n" +
+                    "  }\n" +
+                    "}";
+
+            Thing thing = Thing.fromJson(json);
+
+            assertEquals(Map.of("g:geolocation", Map.of("position", Map.of("longitude", 47.3814, "latitude", -68.323))), thing.getMetadata());
         }
     }
 

@@ -25,7 +25,10 @@ import city.sane.wot.thing.event.ThingEvent;
 import city.sane.wot.thing.form.Form;
 import city.sane.wot.thing.property.ThingProperty;
 import city.sane.wot.thing.security.SecurityScheme;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -85,6 +88,8 @@ public class Thing<P extends ThingProperty<Object>, A extends ThingAction<Object
     Map<String, SecurityScheme> securityDefinitions = new HashMap<>();
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     String base;
+    @JsonAnySetter
+    Map<String, Object> metadata = new HashMap<>();
 
     @SuppressWarnings("squid:S107")
     Thing(Type objectType,
@@ -100,7 +105,8 @@ public class Thing<P extends ThingProperty<Object>, A extends ThingAction<Object
           List<Form> forms,
           List<String> security,
           Map<String, SecurityScheme> securityDefinitions,
-          String base) {
+          String base,
+          Map<String, Object> metadata) {
         this.objectType = objectType;
         this.objectContext = objectContext;
         this.id = id;
@@ -115,6 +121,7 @@ public class Thing<P extends ThingProperty<Object>, A extends ThingAction<Object
         this.security = security;
         this.securityDefinitions = securityDefinitions;
         this.base = base;
+        this.metadata = metadata;
     }
 
     public Thing() {
@@ -181,6 +188,16 @@ public class Thing<P extends ThingProperty<Object>, A extends ThingAction<Object
         return base;
     }
 
+    @JsonAnyGetter
+    public Map<String, Object> getMetadata() {
+        return metadata;
+    }
+
+    @JsonIgnore
+    public Object getMetadata(String key) {
+        return metadata.get(key);
+    }
+
     @Override
     public int hashCode() {
         return getId().hashCode();
@@ -202,26 +219,6 @@ public class Thing<P extends ThingProperty<Object>, A extends ThingAction<Object
             return false;
         }
         return getId().equals(((Thing) obj).getId());
-    }
-
-    @Override
-    public String toString() {
-        return "Thing{" +
-                "objectType='" + objectType + '\'' +
-                ", objectContext=" + objectContext +
-                ", id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", titles=" + titles +
-                ", description='" + description + '\'' +
-                ", descriptions=" + descriptions +
-                ", properties=" + properties +
-                ", actions=" + actions +
-                ", events=" + events +
-                ", forms=" + forms +
-                ", security=" + security +
-                ", securityDefinitions=" + securityDefinitions +
-                ", base='" + base + '\'' +
-                '}';
     }
 
     public String toJson() {
@@ -302,6 +299,27 @@ public class Thing<P extends ThingProperty<Object>, A extends ThingAction<Object
         return properties;
     }
 
+    @Override
+    public String toString() {
+        return "Thing{" +
+                "objectType=" + objectType +
+                ", objectContext=" + objectContext +
+                ", id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", titles=" + titles +
+                ", description='" + description + '\'' +
+                ", descriptions=" + descriptions +
+                ", properties=" + properties +
+                ", actions=" + actions +
+                ", events=" + events +
+                ", forms=" + forms +
+                ", security=" + security +
+                ", securityDefinitions=" + securityDefinitions +
+                ", base='" + base + '\'' +
+                ", metadata=" + metadata +
+                '}';
+    }
+
     public static String randomId() {
         return "urn:uuid:" + UUID.randomUUID();
     }
@@ -360,6 +378,7 @@ public class Thing<P extends ThingProperty<Object>, A extends ThingAction<Object
         private List<String> security = new ArrayList<>();
         private Map<String, SecurityScheme> securityDefinitions = new HashMap<>();
         private String base;
+        private Map<String, Object> metadata = new HashMap<>();
 
         public Builder setObjectType(Type objectType) {
             this.objectType = objectType;
@@ -455,9 +474,19 @@ public class Thing<P extends ThingProperty<Object>, A extends ThingAction<Object
             return this;
         }
 
+        public Builder setMetadata(Map<String, Object> metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        public Builder addMetadata(String key, Object value) {
+            metadata.put(key, value);
+            return this;
+        }
+
         @Override
         public Thing build() {
-            return new Thing(objectType, objectContext, id, title, titles, description, descriptions, properties, actions, events, forms, security, securityDefinitions, base);
+            return new Thing(objectType, objectContext, id, title, titles, description, descriptions, properties, actions, events, forms, security, securityDefinitions, base, metadata);
         }
     }
 }
