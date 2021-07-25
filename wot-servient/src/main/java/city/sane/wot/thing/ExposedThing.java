@@ -74,6 +74,7 @@ public class ExposedThing extends Thing<ExposedThingProperty<Object>, ExposedThi
                  List<String> security,
                  Map<String, SecurityScheme> securityDefinitions,
                  String base,
+                 Map<String, Object> metadata,
                  Map<String, ExposedThingProperty<Object>> properties,
                  Map<String, ExposedThingAction<Object, Object>> actions,
                  Map<String, ExposedThingEvent<Object>> events) {
@@ -90,6 +91,7 @@ public class ExposedThing extends Thing<ExposedThingProperty<Object>, ExposedThi
         this.security = security;
         this.securityDefinitions = securityDefinitions;
         this.base = base;
+        this.metadata = metadata;
         this.properties = properties;
         this.actions = actions;
         this.events = events;
@@ -109,6 +111,7 @@ public class ExposedThing extends Thing<ExposedThingProperty<Object>, ExposedThi
         security = thing.getSecurity();
         securityDefinitions = thing.getSecurityDefinitions();
         base = thing.getBase();
+        metadata = thing.getMetadata();
         ((Map<String, ThingProperty<Object>>) thing.getProperties()).forEach(this::addProperty);
         ((Map<String, ThingAction<Object, Object>>) thing.getActions()).forEach(this::addAction);
         ((Map<String, ThingEvent<Object>>) thing.getEvents()).forEach(this::addEvent);
@@ -338,6 +341,16 @@ public class ExposedThing extends Thing<ExposedThingProperty<Object>, ExposedThi
      */
     public ExposedThing setBase(String base) {
         this.base = base;
+        return this;
+    }
+
+    public ExposedThing setMetadata(Map<String, Object> metadata) {
+        this.metadata = metadata;
+        return this;
+    }
+
+    public ExposedThing addMetadata(String key, Object value) {
+        metadata.put(key, value);
         return this;
     }
 

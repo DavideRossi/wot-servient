@@ -58,6 +58,7 @@ public class ExposedThingTest {
     private String title;
     private String description;
     private String base;
+    private Map<String, Object> metadata;
     private ExposedThingProperty<Object> property;
     private ExposedThingAction<Object, Object> action;
     private ExposedThingEvent<Object> event;
@@ -77,6 +78,7 @@ public class ExposedThingTest {
         title = "counter";
         description = "";
         base = "";
+        metadata = Map.of("g:geolocation", Map.of("position", Map.of("longitude", 47.3814, "latitude", -68.323)));
         property = mock(ExposedThingProperty.class);
         action = mock(ExposedThingAction.class);
         event = mock(ExposedThingEvent.class);
@@ -90,7 +92,7 @@ public class ExposedThingTest {
     @Test
     public void getProperty() {
         Map<String, ExposedThingProperty<Object>> properties = Map.of("count", property);
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, properties, Map.of(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, properties, Map.of(), Map.of());
 
         assertEquals(property, exposedThing.getProperty("count"));
     }
@@ -98,7 +100,7 @@ public class ExposedThingTest {
     @Test
     public void getAction() {
         Map<String, ExposedThingAction<Object, Object>> actions = Map.of("increment", action);
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, Map.of(), actions, Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, Map.of(), actions, Map.of());
 
         assertEquals(action, exposedThing.getAction("increment"));
     }
@@ -106,7 +108,7 @@ public class ExposedThingTest {
     @Test
     public void getEvent() {
         Map<String, ExposedThingEvent<Object>> events = Map.of("change", event);
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, Map.of(), Map.of(), events);
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, Map.of(), Map.of(), events);
 
         assertEquals(event, exposedThing.getEvent("change"));
     }
@@ -115,7 +117,7 @@ public class ExposedThingTest {
     public void readProperties() throws ExecutionException, InterruptedException {
         when(property.read()).thenReturn(completedFuture(null));
         Map<String, ExposedThingProperty<Object>> properties = Map.of("count", property);
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, properties, Map.of(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, properties, Map.of(), Map.of());
 
         exposedThing.readProperties().get();
 
@@ -126,7 +128,7 @@ public class ExposedThingTest {
     public void writeProperties() throws ExecutionException, InterruptedException {
         when(property.write(any())).thenReturn(completedFuture(null));
         Map<String, ExposedThingProperty<Object>> properties = Map.of("count", property);
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, properties, Map.of(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, properties, Map.of(), Map.of());
 
         exposedThing.writeProperties(Map.of("count", 0)).get();
 
@@ -136,7 +138,7 @@ public class ExposedThingTest {
     @Test
     public void expose() {
         when(servient.expose(any())).thenReturn(completedFuture(null));
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, Map.of(), Map.of(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, Map.of(), Map.of(), Map.of());
 
         exposedThing.expose();
 
@@ -146,7 +148,7 @@ public class ExposedThingTest {
     @Test
     public void destroy() {
         when(servient.destroy(any())).thenReturn(completedFuture(null));
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, Map.of(), Map.of(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, Map.of(), Map.of(), Map.of());
 
         exposedThing.destroy();
 
@@ -155,7 +157,7 @@ public class ExposedThingTest {
 
     @Test
     public void addProperty() {
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, new HashMap(), Map.of(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, new HashMap(), Map.of(), Map.of());
 
         exposedThing.addProperty("count");
 
@@ -164,7 +166,7 @@ public class ExposedThingTest {
 
     @Test
     public void addPropertyWithHandlers() {
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, new HashMap(), Map.of(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, new HashMap(), Map.of(), Map.of());
 
         exposedThing.addProperty("count", property, readHandler, writeHandler);
         ExposedThingProperty<Object> property = exposedThing.getProperty("count");
@@ -176,7 +178,7 @@ public class ExposedThingTest {
 
     @Test
     public void addPropertyWithInitValue() {
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, new HashMap(), Map.of(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, new HashMap(), Map.of(), Map.of());
 
         exposedThing.addProperty("count", property, 1337);
 
@@ -186,7 +188,7 @@ public class ExposedThingTest {
     @Test
     public void removeProperty() {
         Map<String, ExposedThingProperty<Object>> properties = new HashMap(Map.of("count", property));
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, properties, Map.of(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, properties, Map.of(), Map.of());
 
         exposedThing.removeProperty("count");
 
@@ -195,7 +197,7 @@ public class ExposedThingTest {
 
     @Test
     public void addAction() {
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, Map.of(), new HashMap(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, Map.of(), new HashMap(), Map.of());
 
         exposedThing.addAction("increment");
 
@@ -204,7 +206,7 @@ public class ExposedThingTest {
 
     @Test
     public void addActionWithBiConsumerHandler() {
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, Map.of(), new HashMap(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, Map.of(), new HashMap(), Map.of());
 
         exposedThing.addAction("increment", biConsumerHandler);
         ExposedThingAction<Object, Object> action = exposedThing.getAction("increment");
@@ -214,7 +216,7 @@ public class ExposedThingTest {
 
     @Test
     public void addActionWithRunnableHandler() {
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, Map.of(), new HashMap(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, Map.of(), new HashMap(), Map.of());
 
         exposedThing.addAction("increment", runnableHandler);
         ExposedThingAction<Object, Object> action = exposedThing.getAction("increment");
@@ -224,7 +226,7 @@ public class ExposedThingTest {
 
     @Test
     public void addActionWithSupplierHandler() throws ServientException, ExecutionException, InterruptedException {
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, Map.of(), new HashMap(), Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, Map.of(), new HashMap(), Map.of());
 
         exposedThing.addAction("increment", supplierHandler);
         ExposedThingAction<Object, Object> action = exposedThing.getAction("increment");
@@ -235,7 +237,7 @@ public class ExposedThingTest {
     @Test
     public void removeAction() {
         Map<String, ExposedThingAction<Object, Object>> actions = new HashMap(Map.of("increment", action));
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, Map.of(), actions, Map.of());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, Map.of(), actions, Map.of());
 
         exposedThing.removeAction("increment");
 
@@ -244,7 +246,7 @@ public class ExposedThingTest {
 
     @Test
     public void addEvent() {
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, Map.of(), Map.of(), new HashMap());
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, Map.of(), Map.of(), new HashMap());
 
         exposedThing.addEvent("change");
 
@@ -254,7 +256,7 @@ public class ExposedThingTest {
     @Test
     public void removeEvent() {
         Map<String, ExposedThingEvent<Object>> events = new HashMap(Map.of("change", event));
-        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, Map.of(), Map.of(), events);
+        ExposedThing exposedThing = new ExposedThing(servient, subject, objectType, objectContext, id, title, Map.of(), description, Map.of(), List.of(), List.of(), Map.of(), base, metadata, Map.of(), Map.of(), events);
 
         exposedThing.removeEvent("change");
 
