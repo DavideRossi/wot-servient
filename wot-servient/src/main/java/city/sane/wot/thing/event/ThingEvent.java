@@ -25,6 +25,7 @@ import city.sane.wot.thing.schema.StringSchema;
 import city.sane.wot.thing.schema.VariableDataSchema;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Objects;
@@ -35,11 +36,18 @@ import java.util.Objects;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ThingEvent<T> extends ThingInteraction<ThingEvent<T>> {
+    @JsonProperty("@type")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    String objectType;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonDeserialize(as = VariableDataSchema.class)
     DataSchema<T> data;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String type;
+
+    public String getObjectType() {
+        return objectType;
+    }
 
     public String getType() {
         return type;
@@ -51,7 +59,7 @@ public class ThingEvent<T> extends ThingInteraction<ThingEvent<T>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), data, type);
+        return Objects.hash(super.hashCode(), objectType, data, type);
     }
 
     @Override
@@ -66,12 +74,13 @@ public class ThingEvent<T> extends ThingInteraction<ThingEvent<T>> {
             return false;
         }
         ThingEvent<Object> that = (ThingEvent<Object>) o;
-        return Objects.equals(data, that.data) && Objects.equals(type, that.type);
+        return Objects.equals(objectType, that.objectType) && Objects.equals(data, that.data) && Objects.equals(type, that.type);
     }
 
     @Override
     public String toString() {
         return "ThingEvent{" +
+                "objectType='" + objectType + '\'' +
                 "data=" + data +
                 ", type='" + type + '\'' +
                 ", description='" + description + '\'' +
@@ -85,8 +94,14 @@ public class ThingEvent<T> extends ThingInteraction<ThingEvent<T>> {
      * Allows building new {@link ThingEvent} objects.
      */
     public static class Builder extends AbstractBuilder<Builder> {
+        private String objectType;
         private DataSchema data = new StringSchema();
         private String type;
+
+        public Builder setObjectType(String objectType) {
+            this.objectType = objectType;
+            return this;
+        }
 
         public ThingEvent.Builder setData(DataSchema data) {
             this.data = data;
@@ -101,6 +116,7 @@ public class ThingEvent<T> extends ThingInteraction<ThingEvent<T>> {
         @Override
         public ThingEvent<Object> build() {
             ThingEvent<Object> event = new ThingEvent<>();
+            event.objectType = objectType;
             event.data = data;
             event.type = type;
             applyInteractionParameters(event);
