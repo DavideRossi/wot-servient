@@ -132,4 +132,4 @@ More information can be found in the (still very short) [documentation](doc/READ
 
 ## License
 
-This project is licensed under the [GNU Lesser General Public License v3.0](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
