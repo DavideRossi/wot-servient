@@ -66,21 +66,21 @@ public class ConsumedThingProperty<T> extends ThingProperty<T> {
         this.thing = thing;
     }
 
-    private List<Form> normalizeHrefs(List<Form> forms, ConsumedThing thing) {
-        return forms.stream().map(f -> normalizeHref(f, thing)).collect(Collectors.toList());
-    }
-
-    private Form normalizeHref(Form form, ConsumedThing thing) {
-        String base = thing.getBase();
-        if (base != null && !base.isEmpty() && !form.getHref().matches("^(?i:[a-z+]+:).*")) {
-            String normalizedHref = base + form.getHref();
-            return new Form.Builder(form).setHref(normalizedHref).build();
-        }
-        else {
-            return form;
-        }
-    }
-
+//    private List<Form> normalizeHrefs(List<Form> forms, ConsumedThing thing) {
+//        return forms.stream().map(f -> normalizeHref(f, thing)).collect(Collectors.toList());
+//    }
+//
+//    private Form normalizeHref(Form form, ConsumedThing thing) {
+//        String base = thing.getBase();
+//        if (base != null && !base.isEmpty() && !form.getHref().matches("^(?i:[a-z+]+:).*")) {
+//            String normalizedHref = base + form.getHref();
+//            return new Form.Builder(form).setHref(normalizedHref).build();
+//        }
+//        else {
+//            return form;
+//        }
+//    }
+//
     public CompletableFuture<T> read() {
         try {
             Pair<ProtocolClient, Form> clientAndForm = thing.getClientFor(getForms(), Operation.READ_PROPERTY);

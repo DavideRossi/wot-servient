@@ -124,8 +124,11 @@ public class ConsumedThing extends Thing<ConsumedThingProperty<Object>, Consumed
 
         // sort available forms by order of client factories defined in config
         List<String> supportedSchemes = servient.getClientSchemes();
-        Set<String> schemes = forms.stream().map(Form::getHrefScheme).filter(Objects::nonNull).sorted(Comparator.comparingInt(supportedSchemes::indexOf))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        Set<String> schemes = forms.stream().
+            map(Form::getHrefScheme).
+            filter(Objects::nonNull).
+            sorted(Comparator.comparingInt(supportedSchemes::indexOf)).
+            collect(Collectors.toCollection(LinkedHashSet::new));
 
         if (schemes.isEmpty()) {
             throw new NoFormForInteractionConsumedThingException("No schemes in forms found");

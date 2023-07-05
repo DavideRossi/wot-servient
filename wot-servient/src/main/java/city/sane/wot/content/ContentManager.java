@@ -49,6 +49,7 @@ public class ContentManager {
 
     static {
         addCodec(new JsonCodec(), true);
+        addCodec(new JsonCodec("application/td+json"));
         addCodec(new TextCodec());
         addCodec(new HtmlCodec());
         addCodec(new CborCodec());
@@ -138,7 +139,7 @@ public class ContentManager {
         ContentCodec codec = CODECS.get(mediaType);
 
         if (codec != null) {
-            log.debug("Content deserializing from '{}'", mediaType);
+            log.debug("Content deserializing from '{}' with schema'{}'", mediaType, schema);
             return codec.bytesToValue(content.getBody(), schema, parameters);
         }
         else {

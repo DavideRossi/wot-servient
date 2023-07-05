@@ -51,6 +51,14 @@ public class ThingProperty<T> extends ThingInteraction<ThingProperty<T>> impleme
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     boolean writeOnly;
     Map<String, Object> optionalProperties = new HashMap<>();
+    private final Map<String, String> jsonschemaMap = Map.of(
+        "jsonschema:ArraySchema", "array", 
+        "jsonschema:IntegerSchema", "integer", 
+        "jsonschema:NullSchema", "null", 
+        "jsonschema:ObjectSchema", "object",
+        "jsonschema:StringSchema", "string", 
+        "jsonschema:BooleanSchema", "boolean", 
+        "jsonschema:NumberSchema", "number");
 
     public String getObjectType() {
         return objectType;
@@ -58,6 +66,10 @@ public class ThingProperty<T> extends ThingInteraction<ThingProperty<T>> impleme
 
     @Override
     public String getType() {
+        //TODO: horrible hack to support properties missing type while using @type with jsonschemas
+        if(this.type == null && this.objectType != null) {
+            return jsonschemaMap.get(this.objectType);
+        }
         return type;
     }
 

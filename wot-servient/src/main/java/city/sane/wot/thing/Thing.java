@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a read-only model of a thing. The class {@link Builder} can be used to
@@ -127,7 +128,6 @@ public class Thing<P extends ThingProperty<Object>, A extends ThingAction<Object
     }
 
     public Thing() {
-
     }
 
     public Type getObjectType() {

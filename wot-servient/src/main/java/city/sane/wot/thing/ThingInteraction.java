@@ -30,6 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract representation of a Thing Interaction (inherited from {@link
@@ -39,6 +43,8 @@ import java.util.Objects;
  * @param <T>
  */
 public abstract class ThingInteraction<T> {
+    private static final Logger log = LoggerFactory.getLogger(ThingInteraction.class);
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     protected String description;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -72,6 +78,21 @@ public abstract class ThingInteraction<T> {
     public T addForm(Form form) {
         forms.add(form);
         return (T) this;
+    }
+    
+    protected List<Form> normalizeHrefs(List<Form> forms, ConsumedThing thing) {
+        return forms.stream().map(f -> normalizeHref(f, thing)).collect(Collectors.toList());
+    }
+    
+    protected Form normalizeHref(Form form, ConsumedThing thing) {
+        String base = thing.getBase();
+        if (base != null && !base.isEmpty() && !form.getHref().matches("^(?i:[a-z+]+:).*")) {
+            String normalizedHref = base + form.getHref();
+            return new Form.Builder(form).setHref(normalizedHref).build();
+        }
+        else {
+            return form;
+        }
     }
 
     @Override

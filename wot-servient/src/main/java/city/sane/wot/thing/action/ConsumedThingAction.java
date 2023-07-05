@@ -33,6 +33,7 @@ import city.sane.wot.thing.form.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -51,7 +52,8 @@ public class ConsumedThingAction<I, O> extends ThingAction<I, O> {
                                ThingAction<I, O> action,
                                ConsumedThing thing) {
         this.name = name;
-        forms = action.getForms();
+//        forms = action.getForms();
+        forms = normalizeHrefs(action.getForms(), thing);
         input = action.getInput();
         output = action.getOutput();
         this.thing = thing;
@@ -108,6 +110,45 @@ public class ConsumedThingAction<I, O> extends ThingAction<I, O> {
         }
     }
 
+    /**
+     * Invokes this action and passes <code>parameters</codes> to it. Returns a future with the
+     * return result of the action.
+     *
+     * @param parameters contains a map with the names of the uri variables as keys and
+     *                   corresponding values (ex. <code>Map.of("step", 3)</code>).
+     * @return
+     */
+    public CompletableFuture<O> invoke(I input, Map<String, Object> parameters) {
+        try {
+            Pair<ProtocolClient, Form> clientAndForm = thing.getClientFor(getForms(), Operation.INVOKE_ACTION);
+            ProtocolClient client = clientAndForm.first();
+            Form form = clientAndForm.second();
+
+            log.debug("Thing '{}' invoking Action '{}' with form '{}' and parameters '{}'", thing.getId(), name, form.getHref(), parameters);
+
+            Content inputContent = ContentManager.valueToContent(input, form.getContentType());
+
+            form = ConsumedThing.handleUriVariables(form, parameters);
+
+            CompletableFuture<Content> result = client.invokeResource(form, inputContent);
+            return result.thenApply(content -> {
+                try {
+                    return ContentManager.contentToValue(content, getOutput());
+                }
+                catch (ContentCodecException e) {
+                    throw new CompletionException(new ConsumedThingException("Received invalid writeResource from Thing: " + e.getMessage()));
+                }
+            });
+        }
+        catch (ContentCodecException e) {
+            throw new CompletionException(new ConsumedThingException("Received invalid input: " + e.getMessage()));
+        }
+        catch (ConsumedThingException e) {
+            throw new CompletionException(e);
+        }
+    }
+    
+    
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), name, thing);

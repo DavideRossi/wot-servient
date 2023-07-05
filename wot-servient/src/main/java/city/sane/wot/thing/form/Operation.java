@@ -36,8 +36,8 @@ public enum Operation {
     WRITE_PROPERTY("writeproperty"),
     OBSERVE_PROPERTY("observeproperty"),
     UNOBSERVE_PROPERTY("unobserveproperty"),
-    READ_ALL_PROPERTIES("readallproperty"),
-    READ_MULTIPLE_PROPERTIES("readmultipleproperty"),
+    READ_ALL_PROPERTIES(" readallproperties"),
+    READ_MULTIPLE_PROPERTIES(" readmultipleproperties"),
     // events
     SUBSCRIBE_EVENT("subscribeevent"),
     UNSUBSCRIBE_EVENT("unsubscribeevent"),

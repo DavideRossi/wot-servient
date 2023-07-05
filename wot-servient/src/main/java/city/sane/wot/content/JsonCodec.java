@@ -33,10 +33,19 @@ import java.util.Map;
  */
 public class JsonCodec implements ContentCodec {
     private final ObjectMapper mapper = new ObjectMapper();
+    private final String mediaType;
+    
+    public JsonCodec() {
+        this.mediaType = "application/json";
+    }
 
+    public JsonCodec(String mediaType) {
+        this.mediaType = mediaType;
+    }
+    
     @Override
     public String getMediaType() {
-        return "application/json";
+        return this.mediaType;
     }
 
     @Override

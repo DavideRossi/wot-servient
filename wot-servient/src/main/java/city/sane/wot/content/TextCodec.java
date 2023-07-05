@@ -21,6 +21,7 @@
  */
 package city.sane.wot.content;
 
+import city.sane.wot.thing.Thing;
 import city.sane.wot.thing.schema.BooleanSchema;
 import city.sane.wot.thing.schema.DataSchema;
 import city.sane.wot.thing.schema.IntegerSchema;
@@ -30,10 +31,14 @@ import city.sane.wot.thing.schema.StringSchema;
 import java.nio.charset.Charset;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * (De)serializes data in plaintext format.
  */
 public class TextCodec implements ContentCodec {
+    private static final Logger log = LoggerFactory.getLogger(Thing.class);
     @Override
     public String getMediaType() {
         return "text/plain";
@@ -72,6 +77,7 @@ public class TextCodec implements ContentCodec {
                     .TYPE:
                 return (T) parsed;
             default:
+                log.warn("Cannot decode "+parsed+" to "+schema);
                 return null;
         }
     }

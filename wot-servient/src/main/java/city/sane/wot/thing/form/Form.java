@@ -56,6 +56,20 @@ public class Form {
     private String contentType;
     private Map<String, Object> optionalProperties = new HashMap<>();
 
+    public Form(Form other, String base) {
+        this.contentType = other.contentType;
+        this.href = other.href;
+        if(getHrefScheme() == null) {
+            this.href = base+href;  //TODO: refine rebase
+        }
+        this.op = other.op;
+        this.optionalProperties = Map.copyOf(other.optionalProperties);
+        this.subprotocol = other.subprotocol;
+    }
+    
+    public Form() {
+    }
+    
     public String getHref() {
         return href;
     }
